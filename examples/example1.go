@@ -19,9 +19,9 @@ func main() {
 	}
 
 	runner := parallelizer.Runner{}
-	hasFinished := runner.Run(func1, func2)
+	err := runner.Run(func1, func2)
 
 	fmt.Println()
 	fmt.Println("Done")
-	fmt.Printf("Timed out? %t", !hasFinished)
+	fmt.Printf("Error: %v", err)
 }

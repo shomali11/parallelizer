@@ -19,9 +19,9 @@ func TestRunnerNoTimeout(t *testing.T) {
 	}
 
 	runner := Runner{}
-	finished := runner.Run(fun1, fun2)
+	err := runner.Run(fun1, fun2)
 
-	assert.True(t, finished)
+	assert.Nil(t, err)
 	assert.Equal(t, value1, 11)
 	assert.Equal(t, value2, 22)
 }
@@ -39,9 +39,9 @@ func TestRunnerLongTimeout(t *testing.T) {
 	}
 
 	runner := Runner{Timeout: time.Minute}
-	finished := runner.Run(fun1, fun2)
+	err := runner.Run(fun1, fun2)
 
-	assert.True(t, finished)
+	assert.Nil(t, err)
 	assert.Equal(t, value1, 11)
 	assert.Equal(t, value2, 22)
 }
@@ -61,9 +61,10 @@ func TestRunnerShortTimeout(t *testing.T) {
 	}
 
 	runner := Runner{Timeout: time.Second}
-	finished := runner.Run(fun1, fun2)
+	err := runner.Run(fun1, fun2)
 
-	assert.False(t, finished)
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "timeout")
 	assert.Equal(t, value1, 1)
 	assert.Equal(t, value2, 2)
 }
