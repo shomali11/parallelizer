@@ -14,6 +14,8 @@ govendor fetch github.com/shomali11/parallelizer
 
 ## Example 1
 
+Running multiple function calls in parallel without a timeout.
+
 ```go
 package main
 
@@ -53,6 +55,8 @@ Timed out? false
 ```
 
 ## Example 2
+
+Running multiple slow function calls in parallel with a short timeout.
 
 ```go
 package main
