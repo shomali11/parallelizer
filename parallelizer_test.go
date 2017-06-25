@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestParallelizer(t *testing.T) {
+func TestParallelizerNoTimeout(t *testing.T) {
 	value1 := 1
 	value2 := 2
 
