@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestParallelizerNoTimeout(t *testing.T) {
+func TestRunnerNoTimeout(t *testing.T) {
 	value1 := 1
 	value2 := 2
 
@@ -18,15 +18,15 @@ func TestParallelizerNoTimeout(t *testing.T) {
 		value2 = 22
 	}
 
-	parallelizer := Parallelizer{}
-	finished := parallelizer.Run(fun1, fun2)
+	runner := Runner{}
+	finished := runner.Run(fun1, fun2)
 
 	assert.True(t, finished)
 	assert.Equal(t, value1, 11)
 	assert.Equal(t, value2, 22)
 }
 
-func TestParallelizerLongTimeout(t *testing.T) {
+func TestRunnerLongTimeout(t *testing.T) {
 	value1 := 1
 	value2 := 2
 
@@ -38,15 +38,15 @@ func TestParallelizerLongTimeout(t *testing.T) {
 		value2 = 22
 	}
 
-	parallelizer := Parallelizer{Timeout: time.Minute}
-	finished := parallelizer.Run(fun1, fun2)
+	runner := Runner{Timeout: time.Minute}
+	finished := runner.Run(fun1, fun2)
 
 	assert.True(t, finished)
 	assert.Equal(t, value1, 11)
 	assert.Equal(t, value2, 22)
 }
 
-func TestParallelizerShortTimeout(t *testing.T) {
+func TestRunnerShortTimeout(t *testing.T) {
 	value1 := 1
 	value2 := 2
 
@@ -60,8 +60,8 @@ func TestParallelizerShortTimeout(t *testing.T) {
 		value2 = 22
 	}
 
-	parallelizer := Parallelizer{Timeout: time.Second}
-	finished := parallelizer.Run(fun1, fun2)
+	runner := Runner{Timeout: time.Second}
+	finished := runner.Run(fun1, fun2)
 
 	assert.False(t, finished)
 	assert.Equal(t, value1, 1)

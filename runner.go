@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-// Parallelizer allows you to parallelize function calls with an optional timeout
-type Parallelizer struct {
+// Runner allows you to parallelize function calls with an optional timeout
+type Runner struct {
 	Timeout time.Duration
 }
 
 // Run parallelizes the function calls and returns a boolean that determines whether the functions completed or timed out
-func (p *Parallelizer) Run(functions ...func()) bool {
+func (p *Runner) Run(functions ...func()) bool {
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(len(functions))
 
@@ -25,7 +25,7 @@ func (p *Parallelizer) Run(functions ...func()) bool {
 	return p.wait(&waitGroup)
 }
 
-func (p *Parallelizer) wait(waitGroup *sync.WaitGroup) bool {
+func (p *Runner) wait(waitGroup *sync.WaitGroup) bool {
 	// If no timeout was provided
 	if p.Timeout <= 0 {
 		waitGroup.Wait()
