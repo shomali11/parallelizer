@@ -1,9 +1,9 @@
 package parallelizer
 
 import (
+	"errors"
 	"sync"
 	"time"
-	"errors"
 )
 
 const (
