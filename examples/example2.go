@@ -7,24 +7,25 @@ import (
 )
 
 func main() {
-	func1 := func() {
+	runner := parallelizer.Runner{Timeout: time.Second}
+
+	runner.Add(func() {
 		time.Sleep(time.Minute)
 
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
 		}
-	}
+	})
 
-	func2 := func() {
+	runner.Add(func() {
 		time.Sleep(time.Minute)
 
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
 		}
-	}
+	})
 
-	runner := parallelizer.Runner{Timeout: time.Second}
-	err := runner.Run(func1, func2)
+	err := runner.Run()
 
 	fmt.Println()
 	fmt.Println("Done")

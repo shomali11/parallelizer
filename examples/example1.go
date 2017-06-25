@@ -6,20 +6,21 @@ import (
 )
 
 func main() {
-	func1 := func() {
+	runner := parallelizer.Runner{}
+
+	runner.Add(func() {
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
 		}
-	}
+	})
 
-	func2 := func() {
+	runner.Add(func() {
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
 		}
-	}
+	})
 
-	runner := parallelizer.Runner{}
-	err := runner.Run(func1, func2)
+	err := runner.Run()
 
 	fmt.Println()
 	fmt.Println("Done")
