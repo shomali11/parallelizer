@@ -58,6 +58,7 @@ Error: <nil>
 ## Example 2
 
 Running multiple slow function calls in parallel with a short timeout.
+_Note: The timeout will not kill the routines. It will just stop waiting for them to finish_
 
 ```go
 package main
@@ -72,7 +73,7 @@ func main() {
 	runner := parallelizer.Runner{Timeout: time.Second}
 
 	runner.Add(func() {
-		time.Sleep(time.Minute)
+		time.Sleep(5 * time.Second)
 
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
@@ -80,7 +81,7 @@ func main() {
 	})
 
 	runner.Add(func() {
-		time.Sleep(time.Minute)
+		time.Sleep(5 * time.Second)
 
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
@@ -92,6 +93,9 @@ func main() {
 	fmt.Println()
 	fmt.Println("Done")
 	fmt.Printf("Error: %v", err)
+	fmt.Println()
+
+	time.Sleep(10 * time.Second)
 }
 ```
 
@@ -101,6 +105,7 @@ Output:
 
 Done
 Error: timeout
+a 1 b 2 c 3
 ```
 
 ## Example 3

@@ -10,7 +10,7 @@ func main() {
 	runner := parallelizer.Runner{Timeout: time.Second}
 
 	runner.Add(func() {
-		time.Sleep(time.Minute)
+		time.Sleep(5 * time.Second)
 
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
@@ -18,7 +18,7 @@ func main() {
 	})
 
 	runner.Add(func() {
-		time.Sleep(time.Minute)
+		time.Sleep(5 * time.Second)
 
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
@@ -30,4 +30,7 @@ func main() {
 	fmt.Println()
 	fmt.Println("Done")
 	fmt.Printf("Error: %v", err)
+	fmt.Println()
+
+	time.Sleep(10 * time.Second)
 }
