@@ -7,30 +7,31 @@ import (
 )
 
 func main() {
-	runner := parallelizer.Runner{Timeout: time.Second}
+	options := &parallelizer.Options{Timeout: time.Second}
+	group := parallelizer.NewGroup(options)
 
-	runner.Add(func() {
-		time.Sleep(5 * time.Second)
+	group.Add(func() {
+		time.Sleep(2 * time.Second)
 
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
 		}
 	})
 
-	runner.Add(func() {
-		time.Sleep(5 * time.Second)
+	group.Add(func() {
+		time.Sleep(2 * time.Second)
 
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
 		}
 	})
 
-	err := runner.Run()
+	err := group.Run()
 
 	fmt.Println()
 	fmt.Println("Done")
 	fmt.Printf("Error: %v", err)
 	fmt.Println()
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 }
