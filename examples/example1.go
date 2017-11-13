@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	group := parallelizer.DefaultGroup()
+	group := parallelizer.NewGroup()
+	defer group.Close()
 
 	group.Add(func() {
 		for char := 'a'; char < 'a'+3; char++ {
@@ -20,7 +21,7 @@ func main() {
 		}
 	})
 
-	err := group.Run()
+	err := group.Wait()
 
 	fmt.Println()
 	fmt.Println("Done")

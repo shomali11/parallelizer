@@ -11,12 +11,11 @@ func main() {
 	defer group.Close()
 
 	group.Add(func() {
-		time.Sleep(2 * time.Second)
+		fmt.Print("Worker 1")
 	})
 
-	err := group.Wait(parallelizer.WithTimeout(time.Second))
-
 	fmt.Println()
-	fmt.Println("Done")
-	fmt.Printf("Error: %v", err)
+	fmt.Println("We did not wait!")
+
+	time.Sleep(time.Second)
 }

@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	options := &parallelizer.Options{WorkerPoolSize: 1}
-	group := parallelizer.NewGroup(options)
+	group := parallelizer.NewGroup(parallelizer.WithPoolSize(1))
+	defer group.Close()
 
 	for i := 1; i <= 10; i++ {
 		i := i
@@ -16,7 +16,7 @@ func main() {
 		})
 	}
 
-	err := group.Run()
+	err := group.Wait()
 
 	fmt.Println()
 	fmt.Println("Done")
