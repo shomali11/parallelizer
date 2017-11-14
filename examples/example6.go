@@ -3,29 +3,24 @@ package main
 import (
 	"fmt"
 	"github.com/shomali11/parallelizer"
+	"time"
 )
 
 func main() {
-	group := parallelizer.NewGroup()
+	group := parallelizer.NewGroup(parallelizer.WithPoolSize(10), parallelizer.WithJobQueueSize(10))
 	defer group.Close()
 
-	group.Add(func() {
-		fmt.Println("Worker 1")
-	})
+	for i := 1; i <= 10; i++ {
+		group.Add(func() {
+			time.Sleep(time.Second)
+		})
 
-	group.Add(func() {
-		fmt.Println("Worker 2")
-	})
+		fmt.Println("Job added at", time.Now().Format("04:05"))
+	}
 
-	group.Wait()
+	err := group.Wait()
 
-	fmt.Println("Workers 1 and 2 have finished")
-
-	group.Add(func() {
-		fmt.Println("Worker 3")
-	})
-
-	group.Wait()
-
-	fmt.Println("Worker 3 has finished")
+	fmt.Println()
+	fmt.Println("Done")
+	fmt.Printf("Error: %v", err)
 }

@@ -7,15 +7,20 @@ import (
 )
 
 func main() {
-	group := parallelizer.NewGroup()
+	group := parallelizer.NewGroup(parallelizer.WithPoolSize(1), parallelizer.WithJobQueueSize(1))
 	defer group.Close()
 
-	group.Add(func() {
-		fmt.Print("Worker 1")
-	})
+	for i := 1; i <= 10; i++ {
+		group.Add(func() {
+			time.Sleep(time.Second)
+		})
+
+		fmt.Println("Job added at", time.Now().Format("04:05"))
+	}
+
+	err := group.Wait()
 
 	fmt.Println()
-	fmt.Println("We did not wait!")
-
-	time.Sleep(time.Second)
+	fmt.Println("Done")
+	fmt.Printf("Error: %v", err)
 }

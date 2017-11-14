@@ -12,11 +12,21 @@ func main() {
 
 	group.Add(func() {
 		time.Sleep(2 * time.Second)
+
+		fmt.Println("Finished work 1")
+	})
+
+	group.Add(func() {
+		time.Sleep(2 * time.Second)
+
+		fmt.Println("Finished work 2")
 	})
 
 	err := group.Wait(parallelizer.WithTimeout(time.Second))
 
-	fmt.Println()
 	fmt.Println("Done")
 	fmt.Printf("Error: %v", err)
+	fmt.Println()
+
+	time.Sleep(2 * time.Second)
 }
