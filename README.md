@@ -2,6 +2,15 @@
 
 Simplifies creating a pool of workers that execute jobs in parallel
 
+## Features
+
+* Easy to use
+* Optional timeout
+* Customizable Size of the Pool of Workers
+    * Default number of workers is 10
+* Customizable Size of the Job Queue
+    * Default job queue size is 100
+
 ## Usage
 
 Using `govendor` [github.com/kardianos/govendor](https://github.com/kardianos/govendor):
