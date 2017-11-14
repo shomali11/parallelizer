@@ -6,10 +6,10 @@ Simplifies creating a pool of workers that execute jobs in parallel
 
 * Easy to use
 * Optional timeout
-* Customizable Size of the Pool of Workers
+* Customizable Pool Size
     * Default number of workers is 10
-* Customizable Size of the Job Queue
-    * Default job queue size is 100
+* Customizable Job Queue Size
+    * Default size is 100
 
 ## Usage
 
