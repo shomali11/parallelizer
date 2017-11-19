@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/shomali11/parallelizer"
 	"time"
@@ -22,7 +23,10 @@ func main() {
 		fmt.Println("Finished work 2")
 	})
 
-	err := group.Wait(parallelizer.WithTimeout(time.Second))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	err := group.Wait(parallelizer.WithContext(ctx))
 
 	fmt.Println("Done")
 	fmt.Printf("Error: %v", err)
