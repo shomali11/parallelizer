@@ -36,8 +36,8 @@ func (g *Group) Add(function func()) error {
 		return errors.New(nilFunctionError)
 	}
 
-	g.jobsChannel <- function
 	g.waitGroup.Add(1)
+	g.jobsChannel <- function
 	return nil
 }
 
