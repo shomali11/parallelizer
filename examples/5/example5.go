@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/shomali11/parallelizer"
 	"time"
+
+	"github.com/shomali11/parallelizer"
 )
 
 func main() {

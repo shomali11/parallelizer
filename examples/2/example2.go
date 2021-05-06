@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/shomali11/parallelizer"
 	"time"
+
+	"github.com/shomali11/parallelizer"
 )
 
 func main() {
