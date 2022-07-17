@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/shomali11/parallelizer"
 )
@@ -11,16 +13,11 @@ func main() {
 	defer group.Close()
 
 	group.Add(func() error {
-		for char := 'a'; char < 'a'+3; char++ {
-			fmt.Printf("%c ", char)
-		}
-		return nil
+		return errors.New("something went wrong")
 	})
 
 	group.Add(func() error {
-		for number := 1; number < 4; number++ {
-			fmt.Printf("%d ", number)
-		}
+		time.Sleep(10 * time.Second)
 		return nil
 	})
 

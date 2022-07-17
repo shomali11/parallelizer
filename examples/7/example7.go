@@ -11,8 +11,9 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		fmt.Println("Finished work")
+		return nil
 	})
 
 	fmt.Println("We did not wait!")

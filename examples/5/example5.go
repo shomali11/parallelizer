@@ -12,8 +12,9 @@ func main() {
 	defer group.Close()
 
 	for i := 1; i <= 10; i++ {
-		group.Add(func() {
+		group.Add(func() error {
 			time.Sleep(time.Second)
+			return nil
 		})
 
 		fmt.Println("Job added at", time.Now().Format("04:05"))

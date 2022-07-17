@@ -6,6 +6,7 @@ Simplifies creating a pool of workers that execute jobs in parallel
 
 * Easy to use
 * Context Support
+* Fail fast with errors
 * Customizable Pool Size
     * Default number of workers is 10
 * Customizable Job Queue Size
@@ -29,16 +30,18 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		for char := 'a'; char < 'a'+3; char++ {
 			fmt.Printf("%c ", char)
 		}
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		for number := 1; number < 4; number++ {
 			fmt.Printf("%d ", number)
 		}
+		return nil
 	})
 
 	err := group.Wait()
@@ -76,16 +79,20 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 
 		fmt.Println("Finished work 1")
+
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 
 		fmt.Println("Finished work 2")
+
+		return nil
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -128,8 +135,9 @@ func main() {
 
 	for i := 1; i <= 10; i++ {
 		i := i
-		group.Add(func() {
+		group.Add(func() error {
 			fmt.Print(i, " ")
+			return nil
 		})
 	}
 
@@ -167,8 +175,9 @@ func main() {
 
 	for i := 1; i <= 10; i++ {
 		i := i
-		group.Add(func() {
+		group.Add(func() error {
 			fmt.Print(i, " ")
+			return nil
 		})
 	}
 
@@ -206,8 +215,9 @@ func main() {
 	defer group.Close()
 
 	for i := 1; i <= 10; i++ {
-		group.Add(func() {
+		group.Add(func() error {
 			time.Sleep(time.Second)
+			return nil
 		})
 
 		fmt.Println("Job added at", time.Now().Format("04:05"))
@@ -257,8 +267,9 @@ func main() {
 	defer group.Close()
 
 	for i := 1; i <= 10; i++ {
-		group.Add(func() {
+		group.Add(func() error {
 			time.Sleep(time.Second)
+			return nil
 		})
 
 		fmt.Println("Job added at", time.Now().Format("04:05"))
@@ -307,8 +318,9 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		fmt.Println("Finished work")
+		return nil
 	})
 
 	fmt.Println("We did not wait!")
@@ -340,12 +352,14 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		fmt.Println("Worker 1")
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		fmt.Println("Worker 2")
+		return nil
 	})
 
 	fmt.Println("Waiting for workers 1 and 2 to finish")
@@ -354,8 +368,9 @@ func main() {
 
 	fmt.Println("Workers 1 and 2 have finished")
 
-	group.Add(func() {
+	group.Add(func() error {
 		fmt.Println("Worker 3")
+		return nil
 	})
 
 	fmt.Println("Waiting for worker 3 to finish")
@@ -377,4 +392,47 @@ Workers 1 and 2 have finished
 Waiting for worker 3 to finish
 Worker 3
 Worker 3 has finished
+```
+
+## Example 9
+
+Showing an example with a failed task.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/shomali11/parallelizer"
+)
+
+func main() {
+	group := parallelizer.NewGroup()
+	defer group.Close()
+
+	group.Add(func() error {
+		return errors.New("something went wrong")
+	})
+
+	group.Add(func() error {
+		time.Sleep(10 * time.Second)
+		return nil
+	})
+
+	err := group.Wait()
+
+	fmt.Println()
+	fmt.Println("Done")
+	fmt.Printf("Error: %v", err)
+}
+```
+
+Output:
+
+```text
+Done
+Error: something went wrong
 ```

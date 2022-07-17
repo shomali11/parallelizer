@@ -12,16 +12,20 @@ func main() {
 	group := parallelizer.NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 
 		fmt.Println("Finished work 1")
+
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 
 		fmt.Println("Finished work 2")
+
+		return nil
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

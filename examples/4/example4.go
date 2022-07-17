@@ -12,8 +12,9 @@ func main() {
 
 	for i := 1; i <= 10; i++ {
 		i := i
-		group.Add(func() {
+		group.Add(func() error {
 			fmt.Print(i, " ")
+			return nil
 		})
 	}
 

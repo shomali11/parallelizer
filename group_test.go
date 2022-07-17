@@ -2,6 +2,7 @@ package parallelizer
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -44,14 +45,16 @@ func TestGroup_NoTimeout(t *testing.T) {
 	group := NewGroup()
 	defer group.Close()
 
-	err := group.Add(func() {
+	err := group.Add(func() error {
 		store1.Set(11)
+		return nil
 	})
 
 	assert.Nil(t, err)
 
-	err = group.Add(func() {
+	err = group.Add(func() error {
 		store2.Set(22)
+		return nil
 	})
 
 	assert.Nil(t, err)
@@ -70,12 +73,14 @@ func TestGroup_LongTimeout(t *testing.T) {
 	group := NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		store2.Set(22)
+		return nil
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
@@ -95,14 +100,16 @@ func TestGroup_ShortTimeout(t *testing.T) {
 	group := NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 		store2.Set(22)
+		return nil
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -123,14 +130,16 @@ func TestGroup_CancelledContext(t *testing.T) {
 	group := NewGroup()
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(2 * time.Second)
 		store2.Set(22)
+		return nil
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -144,6 +153,31 @@ func TestGroup_CancelledContext(t *testing.T) {
 	assert.Equal(t, store2.Get(), 2)
 }
 
+func TestGroup_FailedTask(t *testing.T) {
+	store1 := store{value: 1}
+	store2 := store{value: 2}
+
+	group := NewGroup()
+	defer group.Close()
+
+	group.Add(func() error {
+		return errors.New("something went wrong")
+	})
+
+	group.Add(func() error {
+		time.Sleep(2 * time.Second)
+		store2.Set(22)
+		return nil
+	})
+
+	err := group.Wait()
+
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "something went wrong")
+	assert.Equal(t, store1.Get(), 1)
+	assert.Equal(t, store2.Get(), 2)
+}
+
 func TestGroup_LargeGroupSize(t *testing.T) {
 	store1 := store{value: 1}
 	store2 := store{value: 2}
@@ -151,12 +185,14 @@ func TestGroup_LargeGroupSize(t *testing.T) {
 	group := NewGroup(WithPoolSize(100))
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		store2.Set(22)
+		return nil
 	})
 
 	err := group.Wait()
@@ -173,14 +209,16 @@ func TestGroup_SmallGroupSize(t *testing.T) {
 	group := NewGroup(WithPoolSize(1))
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(time.Second)
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(time.Second)
 		store2.Set(22)
+		return nil
 	})
 
 	err := group.Wait()
@@ -197,14 +235,16 @@ func TestGroup_SmallJobQueueSize(t *testing.T) {
 	group := NewGroup(WithJobQueueSize(1))
 	defer group.Close()
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(time.Second)
 		store1.Set(11)
+		return nil
 	})
 
-	group.Add(func() {
+	group.Add(func() error {
 		time.Sleep(time.Second)
 		store2.Set(22)
+		return nil
 	})
 
 	err := group.Wait()

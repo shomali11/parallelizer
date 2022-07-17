@@ -14,8 +14,9 @@ func NewGroup(options ...GroupOption) *Group {
 	groupOptions := newGroupOptions(options...)
 
 	group := &Group{
-		jobsChannel: make(chan func(), groupOptions.JobQueueSize),
-		waitGroup:   &sync.WaitGroup{},
+		jobsChannel:  make(chan func() error, groupOptions.JobQueueSize),
+		errorChannel: make(chan error),
+		waitGroup:    &sync.WaitGroup{},
 	}
 
 	for i := 1; i <= groupOptions.PoolSize; i++ {
@@ -26,12 +27,13 @@ func NewGroup(options ...GroupOption) *Group {
 
 // Group a group of workers executing functions concurrently
 type Group struct {
-	jobsChannel chan func()
-	waitGroup   *sync.WaitGroup
+	jobsChannel  chan func() error
+	errorChannel chan error
+	waitGroup    *sync.WaitGroup
 }
 
 // Add adds function to queue of jobs to execute
-func (g *Group) Add(function func()) error {
+func (g *Group) Add(function func() error) error {
 	if function == nil {
 		return errors.New(nilFunctionError)
 	}
@@ -45,16 +47,18 @@ func (g *Group) Add(function func()) error {
 func (g *Group) Wait(options ...WaitOption) error {
 	waitOptions := newWaitOptions(options...)
 
-	channel := make(chan bool)
+	waitChannel := make(chan bool)
 	go func() {
 		g.waitGroup.Wait()
-		close(channel)
+		close(waitChannel)
 	}()
 
 	select {
 	case <-waitOptions.Context.Done():
 		return waitOptions.Context.Err()
-	case <-channel:
+	case err := <-g.errorChannel:
+		return err
+	case <-waitChannel:
 		return nil
 	}
 }
@@ -62,11 +66,16 @@ func (g *Group) Wait(options ...WaitOption) error {
 // Close closes resources
 func (g *Group) Close() {
 	close(g.jobsChannel)
+	close(g.errorChannel)
 }
 
 func (g *Group) worker() {
 	for job := range g.jobsChannel {
-		job()
+		err := job()
+		if err != nil {
+			g.errorChannel <- err
+			return
+		}
 		g.waitGroup.Done()
 	}
 }
